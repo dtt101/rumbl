@@ -45,6 +45,14 @@ defmodule Rumbl.VideoControllerTest do
   end
 
   @tag login_as: "max"
+  test "updates user video and redirects to show", %{conn: conn, user: user} do
+    user_video  = insert_video(user, title: "funny cats")
+    conn = put conn, video_path(conn, :update, user_video, video: @valid_attrs)
+    assert redirected_to(conn) == video_path(conn, :show, user_video)
+    assert Repo.get_by!(Video, @valid_attrs).title == "Test"
+  end
+
+  @tag login_as: "max"
   test "authorizes actions against access by other users", %{conn: conn, user: owner} do
     video = insert_video(owner, @valid_attrs)
     non_owner = insert_user(username: "sneaky")
