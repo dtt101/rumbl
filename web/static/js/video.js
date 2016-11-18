@@ -16,7 +16,7 @@ let Video = {
     let msgInput = document.getElementById("msg-input")
     let msgSubmit = document.getElementById("msg-submit")
     let vidChannel = socket.channel("videos:" + videoId)
-    
+
     vidChannel.on("ping", ({count}) => console.log("PING", count))
 
     msgSubmit.addEventListener("click", e => {
@@ -31,7 +31,9 @@ let Video = {
     });
 
     vidChannel.join()
-      .receive("ok", resp => { console.log("Joined video successfully", resp) })
+      .receive("ok", ({annotations}) => {
+        annotations.forEach(ann => this.renderAnnotation(msgContainer, ann))
+      })
       .receive("error", resp => { console.log("Unable to join", resp) })
   },
 
